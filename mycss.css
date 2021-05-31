@@ -9,6 +9,8 @@ html, body, #map {
     color:white;
 }
 
+.navbar{padding:10px;}
+
 .isonline{
     height:4px;
     background-color:white;

@@ -37,7 +37,7 @@
 <nav class="navbar bg-dark navbar-dark">
 
   <!-- Brand -->
-  <a class="navbar-brand" href="#">Webbasiertes Geotracking<div class="isonline" id="isonline"></div></a>
+  <a class="navbar-brand" href="/">Webbasiertes Geotracking<div class="isonline" id="isonline"></div></a>
 
   <!-- Toggler/collapsibe Button -->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">

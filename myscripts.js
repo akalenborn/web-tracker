@@ -20,9 +20,13 @@ document.getElementById("counter").innerHTML = counter;
 var string = getSavedValue("string");
 
 //Initilaisierung Map
+L.Icon.Default.imagePath="/";
+L.Icon.Default.prototype.options.iconUrl = "leaflet-blue-icon.png";
+L.Icon.Default.prototype.options.shadowUrl ="new-marker-shadow.png";
 var map = L.map("map").setView([51.505, -0.09], 13);
 layerGroup = L.layerGroup().addTo(map);
 setMarkers();
+
 
 //Fehlermeldung ignorieren
 map.on("error", (e) => {

@@ -21,8 +21,9 @@ var string = getSavedValue("string");
 
 //Initilaisierung Map
 L.Icon.Default.imagePath="/";
-L.Icon.Default.prototype.options.iconUrl = "leaflet-blue-icon.png";
-L.Icon.Default.prototype.options.shadowUrl ="new-marker-shadow.png";
+L.Icon.Default.prototype.options.iconUrl = "marker-icon.png";
+L.Icon.Default.prototype.options.iconRetinaUrl ="marker-icon-2x.png";
+L.Icon.Default.prototype.options.shadowUrl ="marker-shadow.png";
 var map = L.map("map").setView([51.505, -0.09], 13);
 layerGroup = L.layerGroup().addTo(map);
 setMarkers();
@@ -94,7 +95,11 @@ function getLocation() {
                     "Longitude: " + long + "<br>" +
                     "Altitude: " + alt+"<br>" +
                     "Distance-to-Last: "+distance+"<br>" +
-                    "Bearing: "+bearing).openPopup();
+                    "Bearing: "+bearing+" ("+getCompassDirection(bearing)+")").openPopup();
+
+                document.getElementById("main-arrow").style.transform = "rotate(+"+Math.round(bearing)+"deg)";
+                document.getElementById("main-arrow").style.webkitTransform = "rotate(+"+Math.round(bearing)+"deg)";
+
 
 
                 if(positions.length !== 0){
@@ -317,4 +322,35 @@ function toRadians(degrees) {
 function toDegrees(radians) {
     return radians * 180 / Math.PI;
 }
-         
+
+function getCompassDirection(bearing){
+    if(bearing>= 337.5 && bearing < 22.5){
+        return "North";
+    }
+    else if(bearing>= 22.5 && bearing < 67.5){
+        return "North East";
+    }
+    else if(bearing>= 67.5 && bearing < 112.5){
+        return "East";
+    }
+    else if(bearing>= 112.5 && bearing < 157.5){
+        return "South East";
+    }
+    else if(bearing>= 157.5 && bearing < 202.5){
+        return "South";
+    }
+    else if(bearing>= 202.5 && bearing < 247.5){
+        return "South West";
+    }
+    else if(bearing>= 247.5 && bearing < 292.5){
+        return "West";
+    }
+    else if(bearing>= 292.5 && bearing < 337.5){
+        return "North West";
+    }
+
+    return null;
+
+
+
+}

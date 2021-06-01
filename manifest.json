@@ -1,16 +1,15 @@
 {
-  "name": "Geolocation",
-  "short_name": "GL",
+  "name": "Webbased Geotracking",
+  "short_name": "WG",
   "theme_color": "#2196f3",
   "background_color": "#2196f3",
   "display": "standalone",
   "scope": "/",
-"app": { "background": { "scripts": ["background.js"] }},
   "permissions" : ["power"],
   "start_url": "/index.php",
   "icons": [
     {
-      "src": "myicon.png",
+      "src": "favicon-256x256.png",
       "sizes": "256x256",
       "type": "image/png"
     }

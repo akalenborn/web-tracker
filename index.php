@@ -59,8 +59,14 @@
         </div>
   </div>
 </nav>
-        <div id="map"></div>
-       
+
+
+        <div id="map">
+
+<div class="compass">
+    <div class="compass-inner"><div class="north">N</div><div class="east">E</div><div class="west">W</div><div class="south">S</div><div id ="main-arrow" class="main-arrow"><div id="arrow-up" class="arrow-up"></div><div id ="arrow-down" class="arrow-down"></div></div></div>
+</div>
+        </div>
     </body>
     <script src="myscripts.js"></script>
 

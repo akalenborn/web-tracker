@@ -15,3 +15,92 @@ html, body, #map {
     height:4px;
     background-color:white;
 }
+
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+.compass {
+    margin:10px !important;
+    float:right;
+    width: 70px;
+    height: 70px;
+    background-color: #F3F3F3;
+    border-radius: 100%;
+    background-image: -webkit-linear-gradient(top, #F7F7F7, #ECECEC);
+    position: relative;
+    z-index:10000;
+}
+
+.compass-inner {
+    width: 60px;
+    height: 60px;
+    background-color: #3D3D3D;
+    border-radius: 100%;
+    position: relative;
+    left: 5px;
+    top: 5px;
+    border: 3px solid #C5C5C5;
+}
+
+.main-arrow {
+    width:8px;
+    left: 23.5px;
+    top:8px;
+    position: relative;
+    box-sizing:border-box;
+}
+
+
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 20px solid #EF5052;
+    position: relative;
+}
+
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 20px solid #F3F3F3;
+    position: relative;
+    transform: rotate(180deg);
+}
+
+
+.north {
+    font-size: 10px;
+    font-family: 'Lobster Two', cursive;
+    color: #FFF;
+    position: absolute;
+    left: 24px;
+    top: 0px;
+}
+
+.east {
+    font-size: 10px;
+    font-family: 'Lobster Two', cursive;
+    color: #FFF;
+    position: absolute;
+    left:45px;
+    top: 20px;
+}
+
+.west {
+    font-size: 10px;
+    font-family: 'Lobster Two', cursive;
+    color: #FFF;
+    position: absolute;
+    left: 22px;
+    top: 40px;
+}
+
+.south {
+    font-size: 10px;
+    font-family: 'Lobster Two', cursive;
+    color: #FFF;
+    position: absolute;
+    left: 3px;
+    top: 20px;
+}

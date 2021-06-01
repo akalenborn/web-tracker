@@ -11,8 +11,9 @@ let cacheablePages = [
     "bootstrap.bundle.min.js",
     "jquery-3.6.0.min.js",
     "checkOnline.js",
-    "leaflet-blue-icon.png",
-    "new-marker-shadow.png"
+    "marker-icon.png",
+    "marker-icon-2x.png",
+    "marker-shadow.png"
 ];
 
 // Pre-Cache all cacheable pags

@@ -87,13 +87,14 @@ html, body, #map {
     top: 20px;
 }
 
+
 .west {
     font-size: 10px;
     font-family: 'Lobster Two', cursive;
     color: #FFF;
     position: absolute;
-    left: 22px;
-    top: 40px;
+    left: 2px;
+    top: 20px;
 }
 
 .south {
@@ -101,6 +102,6 @@ html, body, #map {
     font-family: 'Lobster Two', cursive;
     color: #FFF;
     position: absolute;
-    left: 3px;
-    top: 20px;
+    left: 24px;
+    top: 40px;
 }

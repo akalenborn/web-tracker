@@ -10,6 +10,15 @@ var heading;
 var speed;
 var cumulativeDistance = getSavedValue("cumulativeDistance");
 document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
+var bearing = getSavedValue("bearing");
+if (bearing) {
+    document.getElementById("compass").style.transform = "rotate(+" + Math.round(bearing) + "deg)";
+    document.getElementById("compass").style.webkitTransform = "rotate(+" + Math.round(bearing) + "deg)";
+} else {
+    document.getElementById("compass").style = "opacity:0.5";
+
+}
+
 var layerGroup;
 var positions = getSavedValue("positions");
 var watcher;
@@ -20,10 +29,10 @@ document.getElementById("counter").innerHTML = counter;
 var string = getSavedValue("string");
 
 //Initilaisierung Map
-L.Icon.Default.imagePath="/";
+L.Icon.Default.imagePath = "/";
 L.Icon.Default.prototype.options.iconUrl = "marker-icon.png";
-L.Icon.Default.prototype.options.iconRetinaUrl ="marker-icon-2x.png";
-L.Icon.Default.prototype.options.shadowUrl ="marker-shadow.png";
+L.Icon.Default.prototype.options.iconRetinaUrl = "marker-icon-2x.png";
+L.Icon.Default.prototype.options.shadowUrl = "marker-shadow.png";
 var map = L.map("map").setView([51.505, -0.09], 13);
 layerGroup = L.layerGroup().addTo(map);
 setMarkers();
@@ -61,12 +70,11 @@ function getLocation() {
         startWakeLock();
         setupWatch();
 
-        var element=null;
-        var oldlat=null;
-        var oldlong=null;
-        var oldlatlong=null;
-        var distance=null;
-        var bearing=null;
+        var element = null;
+        var oldlat = null;
+        var oldlong = null;
+        var oldlatlong = null;
+        var distance = null;
 
         //Alle 5sek wird die letzte Position auf der Karte markiert
         mapInterval = setInterval(function () {
@@ -76,13 +84,12 @@ function getLocation() {
                 element = positions[positions.length - 1];
                 oldlat = element.Latitude;
                 oldlong = element.Longitude;
-                oldlatlong = L.latLng(oldlat,oldlong);
+                oldlatlong = L.latLng(oldlat, oldlong);
                 distance = oldlatlong.distanceTo(latlong);
-                bearing = calculateBearing(oldlat,oldlong,lat,long);
+                bearing = calculateBearing(oldlat, oldlong, lat, long);
             }
 
-            if (oldlat !== lat && oldlong !== long ) {
-
+            if (oldlat !== lat && oldlong !== long) {
 
 
                 counter++;
@@ -90,23 +97,27 @@ function getLocation() {
                 let marker = L.marker(latlong).addTo(layerGroup);
                 marker.bindPopup(
                     "Nr. : " + counter + "<br>" +
-                    "Time: "+ new Date (timestamp).toLocaleTimeString('en-US', { hour12: false }) + "<br>"+
+                    "Time: " + new Date(timestamp).toLocaleTimeString('en-US', {hour12: false}) + "<br>" +
                     "Latitude: " + lat + "<br>" +
                     "Longitude: " + long + "<br>" +
-                    "Altitude: " + alt+"<br>" +
-                    "Distance-to-Last: "+distance+"<br>" +
-                    "Bearing: "+bearing+" ("+getCompassDirection(bearing)+")").openPopup();
-
-                document.getElementById("main-arrow").style.transform = "rotate(+"+Math.round(bearing)+"deg)";
-                document.getElementById("main-arrow").style.webkitTransform = "rotate(+"+Math.round(bearing)+"deg)";
+                    "Altitude: " + alt + "<br>" +
+                    "Distance-to-Last: " + distance + "<br>" +
+                    "Bearing: " + bearing + " (" + getCompassDirection(bearing) + ")").openPopup();
 
 
+                if (positions.length !== 0) {
 
-                if(positions.length !== 0){
-                    L.polyline([oldlatlong,latlong],{color:"blue"}).addTo(layerGroup);
+                    L.polyline([oldlatlong, latlong], {color: "blue"}).addTo(layerGroup);
                     cumulativeDistance += distance;
                     document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
-                    localStorage.setItem("cumulativeDistance",cumulativeDistance);
+                    localStorage.setItem("cumulativeDistance", cumulativeDistance);
+                    if (positions.length == 1) {
+                        document.getElementById("compass").style = "opacity:1";
+                    }
+                    document.getElementById("main-arrow").style.transform = "rotate(+" + Math.round(bearing) + "deg)";
+                    document.getElementById("main-arrow").style.webkitTransform = "rotate(+" + Math.round(bearing) + "deg)";
+                    localStorage.setItem("bearing", bearing);
+
                 }
 
                 //Diese Position wird anschließend dem String überführt der alle Positionsdaten ausgibt
@@ -146,18 +157,21 @@ function getLocation() {
 //Funktion die zur Bestimmung der aktuellen Position dient
 //Ändert automatisch jeweiligen Positionswerte sobald sich die Position ändert
 function setupWatch() {
-    if(watcher){
+    if (watcher) {
         navigator.geolocation.clearWatch(watcher);
     }
     watcher = navigator.geolocation.watchPosition(setParameters, showErrors, {
         enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge:0
+        maximumAge: 0
     });
 }
 
 //Funktion um die Positionsermittlung zu stoppen
 function stopIt() {
+    if (mywakelock) {
+        mywakelock.release();
+    }
     navigator.geolocation.clearWatch(watcher);
     clearInterval(mapInterval);
 
@@ -172,7 +186,7 @@ function setParameters(position) {
 
     lat = position.coords.latitude;
     long = position.coords.longitude;
-    latlong = L.latLng(lat,long);
+    latlong = L.latLng(lat, long);
     timestamp = position.timestamp;
     alt = position.coords.altitude;
     acc = position.coords.accuracy;
@@ -226,6 +240,9 @@ function getSavedValue(v) {
         if (v == "positions") {
             return [];
         }
+        if (v == "bearing") {
+            return null;
+        }
         return "";
     }
     if (v == "positions") {
@@ -236,9 +253,6 @@ function getSavedValue(v) {
 
 //Funktion zum Zurücksetzen aller lokalen Inhalte wie auch Marker
 function removeAll() {
-    if(mywakelock) {
-        mywakelock.release();
-    }
     layerGroup.clearLayers();
     if (localStorage.getItem("counter")) {
         localStorage.removeItem("counter");
@@ -253,12 +267,19 @@ function removeAll() {
     if (localStorage.getItem("cumulativeDistance")) {
         localStorage.removeItem("cumulativeDistance");
     }
+    if (localStorage.getItem("bearing")) {
+        localStorage.removeItem("bearing");
+    }
     positions = [];
     string = "";
     counter = 0;
-    cumulativeDistance =0;
+    cumulativeDistance = 0;
+    bearing = null;
     document.getElementById("counter").innerHTML = counter;
     document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
+    document.getElementById("compass").style = "opacity:0.5";
+    document.getElementById("main-arrow").style.transform = "rotate(0deg)";
+    document.getElementById("main-arrow").style.webkitTransform = "rotate(0deg)";
     document.getElementById("i1").disabled = true;
     document.getElementById("i2").disabled = true;
 }
@@ -266,23 +287,23 @@ function removeAll() {
 //Funktion die alle Marker neu setzt (sobald Seite neu geladen wird)
 //Greift auf die lokalen Positionsdaten zu
 function setMarkers() {
-    let oldll=null;
-    let ll=null;
+    let oldll = null;
+    let ll = null;
     positions.forEach((element) => {
         oldll = ll;
         ll = L.latLng(element.Latitude, element.Longitude);
         const marker = L.marker(ll).addTo(layerGroup);
         marker.bindPopup(
-            "Nr. : " + element.Counter+ "<br>" +
-            "Time: "+ new Date (element.Timestamp).toLocaleTimeString('en-US', { hour12: false }) + "<br>"+
+            "Nr. : " + element.Counter + "<br>" +
+            "Time: " + new Date(element.Timestamp).toLocaleTimeString('en-US', {hour12: false}) + "<br>" +
             "Latitude: " + element.Latitude + "<br>" +
             "Longitude: " + element.Longitude + "<br>" +
-            "Altitude: " + element.Altitude+"<br>" +
-            "Distance-to-Last: "+element.Distance+"<br>" +
-            "Bearing: "+element.Bearing).openPopup();
+            "Altitude: " + element.Altitude + "<br>" +
+            "Distance-to-Last: " + element.Distance + "<br>" +
+            "Bearing: " + element.Bearing).openPopup();
 
-        if(oldll){
-            L.polyline([oldll,ll],{color:"blue"}).addTo(layerGroup);
+        if (oldll) {
+            L.polyline([oldll, ll], {color: "blue"}).addTo(layerGroup);
         }
     });
 
@@ -301,7 +322,7 @@ async function startWakeLock() {
     }
 }
 
-function calculateBearing(startLat,startLng,destLat,destLng){
+function calculateBearing(startLat, startLng, destLat, destLng) {
     startLat = toRadians(startLat);
     startLng = toRadians(startLng);
     destLat = toRadians(destLat);
@@ -312,7 +333,7 @@ function calculateBearing(startLat,startLng,destLat,destLng){
         Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
     brng = Math.atan2(y, x);
     brng = toDegrees(brng);
-    return (brng + 360) % 360; 
+    return (brng + 360) % 360;
 }
 
 function toRadians(degrees) {
@@ -323,34 +344,26 @@ function toDegrees(radians) {
     return radians * 180 / Math.PI;
 }
 
-function getCompassDirection(bearing){
-    if(bearing>= 337.5 && bearing < 22.5){
+function getCompassDirection(bearing) {
+    if (bearing >= 337.5 && bearing < 22.5) {
         return "North";
-    }
-    else if(bearing>= 22.5 && bearing < 67.5){
+    } else if (bearing >= 22.5 && bearing < 67.5) {
         return "North East";
-    }
-    else if(bearing>= 67.5 && bearing < 112.5){
+    } else if (bearing >= 67.5 && bearing < 112.5) {
         return "East";
-    }
-    else if(bearing>= 112.5 && bearing < 157.5){
+    } else if (bearing >= 112.5 && bearing < 157.5) {
         return "South East";
-    }
-    else if(bearing>= 157.5 && bearing < 202.5){
+    } else if (bearing >= 157.5 && bearing < 202.5) {
         return "South";
-    }
-    else if(bearing>= 202.5 && bearing < 247.5){
+    } else if (bearing >= 202.5 && bearing < 247.5) {
         return "South West";
-    }
-    else if(bearing>= 247.5 && bearing < 292.5){
+    } else if (bearing >= 247.5 && bearing < 292.5) {
         return "West";
-    }
-    else if(bearing>= 292.5 && bearing < 337.5){
+    } else if (bearing >= 292.5 && bearing < 337.5) {
         return "North West";
     }
 
     return null;
-
 
 
 }

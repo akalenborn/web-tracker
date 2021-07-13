@@ -4,16 +4,16 @@ const VERSION = "1.0";
 const CACHE_VERSION = "sw1" + VERSION;
 
 let cacheablePages = [
-    "index.php",
-    "myscripts.js",
-    "mycss.css",
-    "bootstrap.min.css",
-    "bootstrap.bundle.min.js",
-    "jquery-3.6.0.min.js",
-    "checkOnline.js",
-    "marker-icon.png",
-    "marker-icon-2x.png",
-    "marker-shadow.png"
+    "index.html",
+    "/js/main.js",
+    "/css/main.css",
+    "/lib/bootstrap.min.css",
+    "/lib/bootstrap.bundle.min.js",
+    "/lib/jquery-3.6.0.min.js",
+    "/js/checkOnline.js",
+    "/img/marker-icon.png",
+    "/img/marker-icon-2x.png",
+    "/img/marker-shadow.png"
 ];
 
 // Pre-Cache all cacheable pags

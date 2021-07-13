@@ -26,7 +26,6 @@ var mapInterval;
 var mywakelock;
 var counter = getSavedValue("counter");
 document.getElementById("counter").innerHTML = counter;
-var string = getSavedValue("string");
 
 //Initilaisierung Map
 L.Icon.Default.imagePath = "/";
@@ -44,27 +43,25 @@ map.on("error", (e) => {
 });
 
 //Kartendienst wird geladen
-L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 23,
-    id: "mapbox/streets-v11",
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: "pk.eyJ1IjoibGV4ZW50IiwiYSI6ImNrbnFoYnA4YjBjcnUyd3Bma3NiM3hxMnkifQ.U8mRqy94iQ8pZv-gmTAeGA",
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 23,
+    maxNativeZoom: 19
 }).addTo(map);
+
 
 //Wenn keine Positionsdaten vorhanden dann Download deaktivieren
 if (counter == 0) {
-    document.getElementById("i1").disabled = true;
     document.getElementById("i2").disabled = true;
+    document.getElementById("json").disabled = true;
+    document.getElementById("kml").disabled = true;
+    document.getElementById("igc").disabled = true;
+
 }
 
 //Hauptfunktion die beim Track-Button aufgerufen wird
 function getLocation() {
     document.getElementById("b1").onclick = stopIt;
     document.getElementById("b1").innerHTML = "Tracking stoppen";
-    document.getElementById("i1").disabled = true;
-    document.getElementById("i2").disabled = true;
 
     if (navigator.geolocation) {
         startWakeLock();
@@ -86,6 +83,7 @@ function getLocation() {
                 oldlong = element.Longitude;
                 oldlatlong = L.latLng(oldlat, oldlong);
                 distance = oldlatlong.distanceTo(latlong);
+                distance = Math.round(distance * 100) / 100;
                 bearing = calculateBearing(oldlat, oldlong, lat, long);
             }
 
@@ -120,9 +118,6 @@ function getLocation() {
 
                 }
 
-                //Diese Position wird anschließend dem String überführt der alle Positionsdaten ausgibt
-                string = string + "\n" + new Date(timestamp) + " " + lat + " " + long;
-                localStorage.setItem("string", string);
                 document.getElementById("counter").innerHTML = counter;
                 localStorage.setItem("counter", counter);
 
@@ -177,8 +172,12 @@ function stopIt() {
 
     document.getElementById("b1").onclick = getLocation;
     document.getElementById("b1").innerHTML = "Track mich";
-    document.getElementById("i1").disabled = false;
-    document.getElementById("i2").disabled = false;
+    if (counter != 0) {
+        document.getElementById("i2").disabled = false;
+        document.getElementById("json").disabled = false;
+        document.getElementById("kml").disabled = false;
+        document.getElementById("igc").disabled = false;
+    }
 }
 
 //Funktion zum Ändern der jeweiligen Positionswerte
@@ -218,16 +217,32 @@ function showErrors(error) {
 }
 
 //Funktion zum Download des bisher erzeigten Strings als Text-Datei
-function download(filename, text) {
+function download() {
+    var filename = "webbtracker-data";
+    var output = "";
+    if (document.getElementById("json").checked) {
+        filename = filename + ".json";
+        output = JSON.stringify(positions);
+    } else if (document.getElementById("kml").checked) {
+        filename = filename + ".kml";
+
+        var json = layerGroup.toGeoJSON();
+        var kml = tokml(json);
+        output = kml;
+    } else if (document.getElementById("igc").checked) {
+        filename = filename + ".igc";
+        output = getIgcData();
+    }
+
     var element = document.createElement("a");
-    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(string));
+    element.setAttribute("href", "data:application/octet-stream," + encodeURIComponent(output));
     element.setAttribute("download", filename);
 
     element.style.display = "none";
     document.body.appendChild(element);
 
     element.click();
-
+    element.download;
     document.body.removeChild(element);
 }
 
@@ -257,10 +272,6 @@ function removeAll() {
     if (localStorage.getItem("counter")) {
         localStorage.removeItem("counter");
     }
-    if (localStorage.getItem("string")) {
-        localStorage.removeItem("string");
-    }
-
     if (localStorage.getItem("positions")) {
         localStorage.removeItem("positions");
     }
@@ -271,7 +282,6 @@ function removeAll() {
         localStorage.removeItem("bearing");
     }
     positions = [];
-    string = "";
     counter = 0;
     cumulativeDistance = 0;
     bearing = null;
@@ -280,8 +290,10 @@ function removeAll() {
     document.getElementById("compass").style = "opacity:0.5";
     document.getElementById("main-arrow").style.transform = "rotate(0deg)";
     document.getElementById("main-arrow").style.webkitTransform = "rotate(0deg)";
-    document.getElementById("i1").disabled = true;
     document.getElementById("i2").disabled = true;
+    document.getElementById("json").disabled = true;
+    document.getElementById("kml").disabled = true;
+    document.getElementById("igc").disabled = true;
 }
 
 //Funktion die alle Marker neu setzt (sobald Seite neu geladen wird)
@@ -367,3 +379,84 @@ function getCompassDirection(bearing) {
 
 
 }
+
+function getIgcData() {
+    var element = positions[positions.length - 1];
+    var time = element.Timestamp;
+    var fullYear = new Date(time).getFullYear();
+    var year = (fullYear + "").substr(-2);
+    var day = new Date(time).getDate();
+    var month = new Date(time).getMonth() + 1;
+    if ((month + "").length != 2) {
+        month = "0" + month;
+    }
+    var igcString = "AXXXXXXWebtracker\nHFDTE" + day + month + year + "\nHFPLTPILOT:Webtracker-User\nHFGTYGLIDERTYPE:Unknown\nI000000XXX\nF000000XXXXXX\n";
+
+    positions.forEach((element) => {
+        var hours = new Date(element.Timestamp).getHours();
+        if ((hours + "").length != 2) {
+            hours = "0" + hours;
+        }
+        var minutes = new Date(element.Timestamp).getMinutes();
+        if ((minutes + "").length != 2) {
+            minutes = "0" + minutes;
+        }
+        var seconds = new Date(element.Timestamp).getSeconds();
+        if ((seconds + "").length != 2) {
+            seconds = "0" + seconds;
+        }
+        var longitude = element.Longitude;
+        var longD = Math.trunc(longitude);
+        var longM = Math.trunc(((longitude - longD) * 60));
+        var longDm = Math.trunc((longitude - longD - (longM / 60)) * 60000);
+        var longDirection;
+        if (longitude > 0) {
+            longDirection = "E";
+        } else {
+            longDirection = "W";
+        }
+        if ((longD + "").length != 3) {
+            if ((longD + "") != 2) {
+                longD = "00" + longD;
+            } else {
+                longD = "0" + longD;
+            }
+        }
+        if ((longM + "").length != 2) {
+            longM = "00" + longM;
+        }
+
+        var longitudeDmm = "" + longD + longM + longDm + longDirection;
+        var latitude = element.Latitude;
+        var latD = Math.trunc(latitude);
+        var latM = Math.trunc(((latitude - latD) * 60));
+        var latDm = Math.trunc((latitude - latD - (latM / 60)) * 60000);
+        var latDirection;
+        if (latitude > 0) {
+            latDirection = "N";
+        } else {
+            latDirection = "S";
+        }
+
+        if ((latD + "").length != 2) {
+            latD = "0" + latD;
+        }
+        if ((latM + "").length != 2) {
+            latM = "00" + latM;
+        }
+        var latitudeDmm = "" + latD + latM + latDm + latDirection;
+
+        var altitude = Math.trunc(element.Altitude);
+        var altString = altitude + "";
+        while (altString.length != 5) {
+            altString = "0" + altString;
+        }
+        igcString = igcString + "B" + hours + minutes + seconds + latitudeDmm + longitudeDmm + "A" + "00000" + altString + "\n";
+
+    });
+    igcString = igcString + "GSSSSSSSSSSSSSSSSSSSSSSSSSSSSS\n";
+
+    return igcString;
+}
+
+

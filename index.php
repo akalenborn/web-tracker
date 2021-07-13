@@ -5,8 +5,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet"/>
+    <script src="tokml.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -54,12 +53,24 @@
         <div class="navitems">
             <button id="b1" onclick="getLocation()">Track mich</button>
             <button id="b1" onclick="removeAll()">Reset</button>
-            <form onsubmit="download(this['name'].value)">
-                <input id="i1" type="text" name="name" value="test.txt"/>
+            <form onsubmit="download()">
                 <input id="i2" type="submit" value="Download"/>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="json" value="option1"
+                           required>
+                    <label class="form-check-label" for="inlineRadio1">JSON</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="kml" value="option2">
+                    <label class="form-check-label" for="inlineRadio2">KML</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="igc" value="option3">
+                    <label class="form-check-label" for="inlineRadio3">IGC</label>
+                </div>
             </form>
-            <p>Number of tracked positions: <span id="counter"></span></p>
-            <p>Distance traveled: <span id="cumulativeDistance"></span> Meters</p>
+            <p>Anzahl getrackter Positionen: <span id="counter"></span></p>
+            <p>Zurückgelegte Distanz: <span id="cumulativeDistance"></span> m</p>
 
         </div>
     </div>

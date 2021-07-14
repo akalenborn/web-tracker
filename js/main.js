@@ -6,7 +6,6 @@ var timestamp;
 var alt;
 var acc;
 var altacc;
-var heading;
 var speed;
 var cumulativeDistance = getSavedValue("cumulativeDistance");
 document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
@@ -28,7 +27,7 @@ var counter = getSavedValue("counter");
 document.getElementById("counter").innerHTML = counter;
 
 //Initilaisierung Map
-L.Icon.Default.imagePath = "/";
+L.Icon.Default.imagePath = "/img/";
 L.Icon.Default.prototype.options.iconUrl = "marker-icon.png";
 L.Icon.Default.prototype.options.iconRetinaUrl = "marker-icon-2x.png";
 L.Icon.Default.prototype.options.shadowUrl = "marker-shadow.png";
@@ -64,14 +63,15 @@ function getLocation() {
     document.getElementById("b1").innerHTML = "Tracking stoppen";
 
     if (navigator.geolocation) {
-        startWakeLock();
+        // startWakeLock();
         setupWatch();
 
         var element = null;
         var oldlat = null;
         var oldlong = null;
+        var oldalt = 0;
         var oldlatlong = null;
-        var distance = null;
+        var distance = 0;
 
         //Alle 5sek wird die letzte Position auf der Karte markiert
         mapInterval = setInterval(function () {
@@ -81,14 +81,14 @@ function getLocation() {
                 element = positions[positions.length - 1];
                 oldlat = element.Latitude;
                 oldlong = element.Longitude;
+                oldalt = element.Altitude;
                 oldlatlong = L.latLng(oldlat, oldlong);
                 distance = oldlatlong.distanceTo(latlong);
                 distance = Math.round(distance * 100) / 100;
-                bearing = calculateBearing(oldlat, oldlong, lat, long);
+                bearing = Math.round(calculateBearing(oldlat, oldlong, lat, long) * 100) / 100;
             }
 
-            if (oldlat !== lat && oldlong !== long) {
-
+            if (oldlat !== lat || oldlong !== long || oldalt !== alt) {
 
                 counter++;
                 map.setView(latlong, 21);
@@ -99,7 +99,8 @@ function getLocation() {
                     "Latitude: " + lat + "<br>" +
                     "Longitude: " + long + "<br>" +
                     "Altitude: " + alt + "<br>" +
-                    "Distance-to-Last: " + distance + "<br>" +
+                    "Distance-to-Last: " + distance + "m<br>" +
+                    "Altitude-to-Last: " + (oldalt !== 0 ? (Math.round((alt - oldalt) * 100) / 100) : 0) + "m<br>" +
                     "Bearing: " + bearing + " (" + getCompassDirection(bearing) + ")").openPopup();
 
 
@@ -129,10 +130,10 @@ function getLocation() {
                     Altitude: alt,
                     Accuracy: acc,
                     AltAccuracy: altacc,
-                    Heading: heading,
                     Speed: speed,
                     Timestamp: timestamp,
-                    Distance: distance,
+                    DistanceToLast: distance,
+                    AltToLast: (alt - oldalt),
                     Bearing: bearing
                 };
                 //Dieser JSON-Objekt wird dem Array überführt
@@ -145,7 +146,7 @@ function getLocation() {
 
 
     } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        console.alert("Geolocation is not supported by this browser.");
     }
 }
 
@@ -187,12 +188,10 @@ function setParameters(position) {
     long = position.coords.longitude;
     latlong = L.latLng(lat, long);
     timestamp = position.timestamp;
-    alt = position.coords.altitude;
+    alt = Math.round(position.coords.altitude * 100) / 100;
     acc = position.coords.accuracy;
     altacc = position.coords.altitudeAccuracy;
-    heading = position.coords.heading;
     speed = position.coords.speed;
-
 }
 
 //Funktion die ausgeführt wird, sobald kein Standort ermittelt werden kann
@@ -311,7 +310,8 @@ function setMarkers() {
             "Latitude: " + element.Latitude + "<br>" +
             "Longitude: " + element.Longitude + "<br>" +
             "Altitude: " + element.Altitude + "<br>" +
-            "Distance-to-Last: " + element.Distance + "<br>" +
+            "Distance-to-Last: " + element.DistanceToLast + "m<br>" +
+            "Altitude-to-Last:" + element.AltToLast + "m<br>" +
             "Bearing: " + element.Bearing).openPopup();
 
         if (oldll) {
@@ -357,7 +357,9 @@ function toDegrees(radians) {
 }
 
 function getCompassDirection(bearing) {
-    if (bearing >= 337.5 && bearing < 22.5) {
+    if (bearing == null) {
+        return null;
+    } else if (bearing >= 337.5 || bearing < 22.5) {
         return "North";
     } else if (bearing >= 22.5 && bearing < 67.5) {
         return "North East";
@@ -457,6 +459,10 @@ function getIgcData() {
     igcString = igcString + "GSSSSSSSSSSSSSSSSSSSSSSSSSSSSS\n";
 
     return igcString;
+}
+
+function getKmh(distance, t1, t2) {
+
 }
 
 

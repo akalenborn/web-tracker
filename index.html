@@ -1,7 +1,7 @@
 <html lang="de">
 <head>
     <link rel="manifest" href="/manifest.json"/>
-    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
@@ -9,10 +9,10 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
-    <script src="lib/jquery-3.6.0.min.js"></script>
+    <script src="/lib/jquery-3.6.0.min.js"></script>
 
-    <link rel="stylesheet" href="lib/bootstrap.min.css">
-    <script src="lib/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/lib/bootstrap.min.css">
+    <script src="/lib/bootstrap.bundle.min.js"></script>
 
 
     <meta charset="utf-8"/>
@@ -52,26 +52,27 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <div class="navitems">
             <button id="b1" onclick="getLocation()">Track mich</button>
-            <button id="b1" onclick="removeAll()">Reset</button>
+            <button id="b2" onclick="removeAll()">Reset</button>
             <form onsubmit="download()">
                 <input id="i2" type="submit" value="Download"/>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="json" value="option1"
                            required>
-                    <label class="form-check-label" for="inlineRadio1">JSON</label>
+                    <label class="form-check-label" for="json">JSON</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="kml" value="option2">
-                    <label class="form-check-label" for="inlineRadio2">KML</label>
+                    <label class="form-check-label" for="kml">KML</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="igc" value="option3">
-                    <label class="form-check-label" for="inlineRadio3">IGC</label>
+                    <label class="form-check-label" for="igc">IGC</label>
                 </div>
             </form>
             <p>Anzahl getrackter Positionen: <span id="counter"></span></p>
             <p>Zurückgelegte Distanz: <span id="cumulativeDistance"></span> m</p>
-
+            <p><span id="alt"></span></p>
+            <p><span id="altround"></span></p>
         </div>
     </div>
 </nav>
@@ -93,6 +94,6 @@
     </div>
 </div>
 </body>
-<script src="js/main.js"></script>
+<script src="/js/main.js"></script>
 
 </html>

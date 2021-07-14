@@ -99,9 +99,9 @@ function getLocation() {
                     "Time: " + new Date(timestamp).toLocaleTimeString('en-US', {hour12: false}) + "<br>" +
                     "Latitude: " + lat + "<br>" +
                     "Longitude: " + long + "<br>" +
-                    "Altitude: " + alt + "m<br>" +
-                    "Distance-to-Last: " + distance + "m<br>" +
-                    "Altitude-to-Last: " + (oldalt !== 0 ? (Math.round((alt - oldalt) * 100) / 100) : 0) + "m<br>" +
+                    "Altitude: " + (alt !== 0 ? alt + "m" : null) + "<br>" +
+                    "Distance-to-Last: " + (distance !== 0 ? distance + "m" : null) + "<br>" +
+                    "Altitude-to-Last: " + (oldalt !== 0 ? (Math.round((alt - oldalt) * 100) / 100) + "m" : null) + "<br>" +
                     "Bearing: " + bearing + " (" + getCompassDirection(bearing) + ")").openPopup();
 
                 //Sofern mehr als 2 Positionen ermittelt wurden können die Distanzen ermittelt und auf der Karte

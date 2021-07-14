@@ -76,6 +76,7 @@ function getLocation() {
         //Alle 5sek wird die letzte Position auf der Karte markiert
         mapInterval = setInterval(function () {
             setupWatch();
+            startWakeLock();
 
             if (positions.length !== 0) {
                 element = positions[positions.length - 1];
@@ -88,6 +89,7 @@ function getLocation() {
                 bearing = Math.round(calculateBearing(oldlat, oldlong, lat, long) * 100) / 100;
             }
 
+            //Nur Werte ermitteln bei denen Längen-,Breiten oder Höhengrad unterschiedlich ist
             if (oldlat !== lat || oldlong !== long || oldalt !== alt) {
 
                 counter++;
@@ -103,13 +105,16 @@ function getLocation() {
                     "Altitude-to-Last: " + (oldalt !== 0 ? (Math.round((alt - oldalt) * 100) / 100) : 0) + "m<br>" +
                     "Bearing: " + bearing + " (" + getCompassDirection(bearing) + ")").openPopup();
 
-
+                //Sofern mehr als 2 Positionen ermittelt wurden können die Distanzen ermittelt und auf der Karte
+                //angezeigt werden
                 if (positions.length !== 0) {
 
                     L.polyline([oldlatlong, latlong], {color: "blue"}).addTo(layerGroup);
                     cumulativeDistance += distance;
                     document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
                     localStorage.setItem("cumulativeDistance", cumulativeDistance);
+
+                    //Kompass wird aktualisiert
                     if (positions.length == 1) {
                         document.getElementById("compass").style = "opacity:1";
                     }
@@ -324,6 +329,7 @@ function setMarkers() {
     }
 }
 
+//Funktion die das Endgerätfenster aktiv hält
 async function startWakeLock() {
     if ('wakeLock' in navigator) {
 
@@ -334,6 +340,7 @@ async function startWakeLock() {
     }
 }
 
+//Funktion zur Bestimmung der Peilung zwischen 2 Standortpunkten
 function calculateBearing(startLat, startLng, destLat, destLng) {
     startLat = toRadians(startLat);
     startLng = toRadians(startLng);
@@ -348,14 +355,17 @@ function calculateBearing(startLat, startLng, destLat, destLng) {
     return (brng + 360) % 360;
 }
 
+//Funktion zur Umwandlung von Grad in Bogenmaß
 function toRadians(degrees) {
     return degrees * Math.PI / 180;
 }
 
+//Funktion zur Umwandlung von Bogenmaß in Grad
 function toDegrees(radians) {
     return radians * 180 / Math.PI;
 }
 
+//Funktion zur Bestimmung der Himmelsrichtung für die Kompassfunktion
 function getCompassDirection(bearing) {
     if (bearing == null) {
         return null;
@@ -382,6 +392,7 @@ function getCompassDirection(bearing) {
 
 }
 
+//Funktion zum Aufbau des IGC-Formats
 function getIgcData() {
     var element = positions[positions.length - 1];
     var time = element.Timestamp;
@@ -459,10 +470,6 @@ function getIgcData() {
     igcString = igcString + "GSSSSSSSSSSSSSSSSSSSSSSSSSSSSS\n";
 
     return igcString;
-}
-
-function getKmh(distance, t1, t2) {
-
 }
 
 

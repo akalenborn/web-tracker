@@ -100,7 +100,7 @@ function getLocation() {
                     "Time: " + new Date(timestamp).toLocaleTimeString('en-US', {hour12: false}) + "<br>" +
                     "Latitude: " + lat + "<br>" +
                     "Longitude: " + long + "<br>" +
-                    "Altitude: " + alt + "<br>" +
+                    "Altitude: " + alt + "m<br>" +
                     "Distance-to-Last: " + distance + "m<br>" +
                     "Altitude-to-Last: " + (oldalt !== 0 ? (Math.round((alt - oldalt) * 100) / 100) : 0) + "m<br>" +
                     "Bearing: " + bearing + " (" + getCompassDirection(bearing) + ")").openPopup();
@@ -314,12 +314,12 @@ function setMarkers() {
             "Time: " + new Date(element.Timestamp).toLocaleTimeString('en-US', {hour12: false}) + "<br>" +
             "Latitude: " + element.Latitude + "<br>" +
             "Longitude: " + element.Longitude + "<br>" +
-            "Altitude: " + element.Altitude + "<br>" +
+            "Altitude: " + element.Altitude + "m<br>" +
             "Distance-to-Last: " + element.DistanceToLast + "m<br>" +
             "Altitude-to-Last:" + element.AltToLast + "m<br>" +
             "Bearing: " + element.Bearing).openPopup();
 
-        if (oldll) {
+        if (oldll) { 
             L.polyline([oldll, ll], {color: "blue"}).addTo(layerGroup);
         }
     });

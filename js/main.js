@@ -41,14 +41,14 @@ map.on("error", (e) => {
     if (e && e.error !== "Error: Not Found") console.error(e);
 });
 
-//Kartendienst wird geladen
+//OpenStreetMap-Kartendienst wird geladen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 23,
     maxNativeZoom: 19
 }).addTo(map);
 
 
-//Wenn keine Positionsdaten vorhanden dann Download deaktivieren
+//Wenn keine Positionsdaten vorhanden dann Downloadinhalte deaktivieren
 if (counter == 0) {
     document.getElementById("i2").disabled = true;
     document.getElementById("json").disabled = true;
@@ -63,7 +63,7 @@ function getLocation() {
     document.getElementById("b1").innerHTML = "Tracking stoppen";
 
     if (navigator.geolocation) {
-        // startWakeLock();
+        startWakeLock();
         setupWatch();
 
         var element = null;
@@ -76,7 +76,6 @@ function getLocation() {
         //Alle 5sek wird die letzte Position auf der Karte markiert
         mapInterval = setInterval(function () {
             setupWatch();
-            startWakeLock();
 
             if (positions.length !== 0) {
                 element = positions[positions.length - 1];
@@ -220,7 +219,7 @@ function showErrors(error) {
     }
 }
 
-//Funktion zum Download des bisher erzeigten Strings als Text-Datei
+//Funktion zum Download der Positionsdaten je nach Auswahl des Ausgabeformats als JSON-, KML- oder IGC-Datei
 function download() {
     var filename = "webbtracker-data";
     var output = "";
@@ -319,7 +318,7 @@ function setMarkers() {
             "Altitude-to-Last:" + element.AltToLast + "m<br>" +
             "Bearing: " + element.Bearing).openPopup();
 
-        if (oldll) { 
+        if (oldll) {
             L.polyline([oldll, ll], {color: "blue"}).addTo(layerGroup);
         }
     });

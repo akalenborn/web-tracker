@@ -50,7 +50,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 //Wenn keine Positionsdaten vorhanden dann Downloadinhalte deaktivieren
 if (counter == 0) {
-    document.getElementById("i2").disabled = true;
+    document.getElementById("downloadBtn").disabled = true;
     document.getElementById("json").disabled = true;
     document.getElementById("kml").disabled = true;
     document.getElementById("igc").disabled = true;
@@ -59,8 +59,8 @@ if (counter == 0) {
 
 //Hauptfunktion die beim Track-Button aufgerufen wird
 function getLocation() {
-    document.getElementById("b1").onclick = stopIt;
-    document.getElementById("b1").innerHTML = "Tracking stoppen";
+    document.getElementById("trackBtn").onclick = stopIt;
+    document.getElementById("trackBtn").innerHTML = "Tracking stoppen";
 
     if (navigator.geolocation) {
         startWakeLock();
@@ -175,10 +175,10 @@ function stopIt() {
     navigator.geolocation.clearWatch(watcher);
     clearInterval(mapInterval);
 
-    document.getElementById("b1").onclick = getLocation;
-    document.getElementById("b1").innerHTML = "Track mich";
+    document.getElementById("trackBtn").onclick = getLocation;
+    document.getElementById("trackBtn").innerHTML = "Track mich";
     if (counter != 0) {
-        document.getElementById("i2").disabled = false;
+        document.getElementById("downloadBtn").disabled = false;
         document.getElementById("json").disabled = false;
         document.getElementById("kml").disabled = false;
         document.getElementById("igc").disabled = false;
@@ -293,7 +293,7 @@ function removeAll() {
     document.getElementById("compass").style = "opacity:0.5";
     document.getElementById("main-arrow").style.transform = "rotate(0deg)";
     document.getElementById("main-arrow").style.webkitTransform = "rotate(0deg)";
-    document.getElementById("i2").disabled = true;
+    document.getElementById("downloadBtn").disabled = true;
     document.getElementById("json").disabled = true;
     document.getElementById("kml").disabled = true;
     document.getElementById("igc").disabled = true;

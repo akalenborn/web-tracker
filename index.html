@@ -51,10 +51,10 @@
     <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <div class="navitems">
-            <button id="b1" onclick="getLocation()">Track mich</button>
-            <button id="b2" onclick="removeAll()">Reset</button>
+            <button id="trackBtn" onclick="getLocation()">Track mich</button>
+            <button id="resetBtn" onclick="removeAll()">Reset</button>
             <form onsubmit="download()">
-                <input id="i2" type="submit" value="Download"/>
+                <input id="downloadBtn" type="submit" value="Download"/>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="json" value="option1"
                            required>
@@ -71,8 +71,6 @@
             </form>
             <p>Anzahl getrackter Positionen: <span id="counter"></span></p>
             <p>Zurückgelegte Distanz: <span id="cumulativeDistance"></span> m</p>
-            <p><span id="alt"></span></p>
-            <p><span id="altround"></span></p>
         </div>
     </div>
 </nav>

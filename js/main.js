@@ -11,8 +11,8 @@ var cumulativeDistance = getSavedValue("cumulativeDistance");
 document.getElementById("cumulativeDistance").innerHTML = cumulativeDistance;
 var bearing = getSavedValue("bearing");
 if (bearing) {
-    document.getElementById("compass").style.transform = "rotate(+" + Math.round(bearing) + "deg)";
-    document.getElementById("compass").style.webkitTransform = "rotate(+" + Math.round(bearing) + "deg)";
+    document.getElementById("main-arrow").style.transform = "rotate(+" + Math.round(bearing) + "deg)";
+    document.getElementById("main-arrow").style.webkitTransform = "rotate(+" + Math.round(bearing) + "deg)";
 } else {
     document.getElementById("compass").style = "opacity:0.5";
 
@@ -57,7 +57,10 @@ if (counter == 0) {
 
 }
 
-//Hauptfunktion die beim Track-Button aufgerufen wird
+
+/**
+ * Hauptfunktion zur Positionsermittlung, die aufgerufen wird sobald der Tracking-Button aktiviert wird
+ */
 function getLocation() {
     document.getElementById("trackBtn").onclick = stopIt;
     document.getElementById("trackBtn").innerHTML = "Tracking stoppen";
@@ -154,8 +157,9 @@ function getLocation() {
     }
 }
 
-//Funktion die zur Bestimmung der aktuellen Position dient
-//Ändert automatisch jeweiligen Positionswerte sobald sich die Position ändert
+/**
+ * Funktion die zur Bestimmung der aktuellen Position dient indem neues watchPosition-Objekt erzeugt wird
+ */
 function setupWatch() {
     if (watcher) {
         navigator.geolocation.clearWatch(watcher);
@@ -167,7 +171,10 @@ function setupWatch() {
     });
 }
 
-//Funktion um die Positionsermittlung zu stoppen
+
+/**
+ * Funktion um die Positionsermittlung zu stoppen
+ */
 function stopIt() {
     if (mywakelock) {
         mywakelock.release();
@@ -185,7 +192,11 @@ function stopIt() {
     }
 }
 
-//Funktion zum Ändern der jeweiligen Positionswerte
+/**
+ * Funktion zum Ändern der jeweiligen Positionswerte
+ *
+ * @param {object} position Instanz der Position die bei der Positionsermittlung mittels watchPosition erzeugt wird
+ */
 function setParameters(position) {
 
     lat = position.coords.latitude;
@@ -198,7 +209,12 @@ function setParameters(position) {
     speed = position.coords.speed;
 }
 
-//Funktion die ausgeführt wird, sobald kein Standort ermittelt werden kann
+
+/**
+ * Funktion die ausgeführt wird, sobald kein Standort ermittelt werden kann
+ *
+ * @param {object} error Instanz der Fehlermeldung die bei der Positionsermittlung mittels watchPosition erzeugt wird
+ */
 function showErrors(error) {
     switch (error.code) {
         case error.PERMISSION_DENIED:
@@ -219,7 +235,10 @@ function showErrors(error) {
     }
 }
 
-//Funktion zum Download der Positionsdaten je nach Auswahl des Ausgabeformats als JSON-, KML- oder IGC-Datei
+
+/**
+ * Funktion zum Download der Positionsdaten je nach Auswahl des Ausgabeformats als JSON-, KML- oder IGC-Datei
+ */
 function download() {
     var filename = "webbtracker-data";
     var output = "";
@@ -241,15 +260,36 @@ function download() {
     element.setAttribute("href", "data:application/octet-stream," + encodeURIComponent(output));
     element.setAttribute("download", filename);
 
-    element.style.display = "none";
-    document.body.appendChild(element);
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        console.log('This is a IOS device');
+        var reader = new FileReader();
+        var out = new Blob([output], {type: 'application/octet-stream'});
+        reader.onload = function (e) {
+            window.location.href = reader.result;
+        }
+        reader.readAsDataURL(out);
 
-    element.click();
-    element.download;
-    document.body.removeChild(element);
+    } else {
+        console.log('This is Not a IOS device');
+        element.style.display = "none";
+        document.body.appendChild(element);
+
+        element.click();
+        element.download;
+        document.body.removeChild(element);
+    }
+
+
 }
 
-//Funktion der auf eine bestimmte lokale Variable zugreift
+
+/**
+ * Funktion die auf eine bestimmte lokale Variable zugreift
+ *
+ * @param {string} v Name der lokal gespeicherten Variable
+ * @return {string} Ausgabe ist entweder der Wert der lokal gespeicherten Variable oder ein festgelegter Defaultwert
+ */
 function getSavedValue(v) {
     if (!localStorage.getItem(v)) {
         if (v == "counter" || v == "cumulativeDistance") {
@@ -269,7 +309,10 @@ function getSavedValue(v) {
     return localStorage.getItem(v);
 }
 
-//Funktion zum Zurücksetzen aller lokalen Inhalte wie auch Marker
+/**
+ * Funktion zum Zurücksetzen aller lokalen Inhalte wie auch Marker
+ *
+ */
 function removeAll() {
     layerGroup.clearLayers();
     if (localStorage.getItem("counter")) {
@@ -299,8 +342,9 @@ function removeAll() {
     document.getElementById("igc").disabled = true;
 }
 
-//Funktion die alle Marker neu setzt (sobald Seite neu geladen wird)
-//Greift auf die lokalen Positionsdaten zu
+/**
+ * Funktion die alle Marker neu setzt sobald die Seite neu geladen wird (greift auf lokale Positionsdaten zu)
+ */
 function setMarkers() {
     let oldll = null;
     let ll = null;
@@ -328,7 +372,9 @@ function setMarkers() {
     }
 }
 
-//Funktion die das Endgerätfenster aktiv hält
+/**
+ * Funktion die das Endgerätfenster aktiv hält
+ */
 async function startWakeLock() {
     if ('wakeLock' in navigator) {
 
@@ -339,7 +385,15 @@ async function startWakeLock() {
     }
 }
 
-//Funktion zur Bestimmung der Peilung zwischen 2 Standortpunkten
+/**
+ * Funktion zur Bestimmung der Peilung zwischen 2 Standortpunkten
+ * @param {number} startLat Breitengrad des Startpunktes
+ * @param {number} startLng Längengrad des Startpunktes
+ * @param {number} destLat Breitengrad des Endpunktes
+ * @param {number} destLng Längengrad des Endpunktes
+ * @return {number} Errechnete Peilung zu den 2 Standortpunkten als Ausgabe
+ */
+//Quelle: https://stackoverflow.com/a/52079217 - Andrej Bulganov - Letzter Zugriff: 11.07.2021
 function calculateBearing(startLat, startLng, destLat, destLng) {
     startLat = toRadians(startLat);
     startLng = toRadians(startLng);
@@ -354,17 +408,32 @@ function calculateBearing(startLat, startLng, destLat, destLng) {
     return (brng + 360) % 360;
 }
 
-//Funktion zur Umwandlung von Grad in Bogenmaß
+/**
+ * Funktion zur Umwandlung von Grad in Bogenmaß
+ *
+ * @param {number} degrees Gradangabe zur Umwandlung in Bogenmaß
+ * @return {number} Bogenmaßangabe als Ausgabe
+ */
 function toRadians(degrees) {
     return degrees * Math.PI / 180;
 }
 
-//Funktion zur Umwandlung von Bogenmaß in Grad
+/**
+ * Funktion zur Umwandlung von Bogenmaß in Grad
+ *
+ * @param {number} degrees Bogenmaßangabe zur Umwandlung in Grad
+ * @return {number} Gradangabe als Ausgabe
+ */
 function toDegrees(radians) {
     return radians * 180 / Math.PI;
 }
 
-//Funktion zur Bestimmung der Himmelsrichtung für die Kompassfunktion
+/**
+ * Funktion zur Bestimmung der Himmelsrichtung für die Kompassfunktion
+ *
+ * @param {number} bearing Peiling als Grandangabe bis zu 360 Grad
+ * @return {string} Himmelsrichtung als Ausgabe
+ */
 function getCompassDirection(bearing) {
     if (bearing == null) {
         return null;
@@ -391,7 +460,11 @@ function getCompassDirection(bearing) {
 
 }
 
-//Funktion zum Aufbau des IGC-Formats
+/**
+ * //Funktion zum Aufbau des IGC-Formats
+ *
+ * @return {string} Positionsdaten in Form eines IGC-Formats als Ausgabe
+ */
 function getIgcData() {
     var element = positions[positions.length - 1];
     var time = element.Timestamp;
@@ -418,15 +491,17 @@ function getIgcData() {
             seconds = "0" + seconds;
         }
         var longitude = element.Longitude;
-        var longD = Math.trunc(longitude);
-        var longM = Math.trunc(((longitude - longD) * 60));
-        var longDm = Math.trunc((longitude - longD - (longM / 60)) * 60000);
         var longDirection;
         if (longitude > 0) {
             longDirection = "E";
         } else {
             longDirection = "W";
         }
+        longitude = Math.abs(longitude);
+        var longD = Math.trunc(longitude);
+        var longM = Math.trunc(((longitude - longD) * 60));
+        var longDm = Math.trunc((longitude - longD - (longM / 60)) * 60000);
+
         if ((longD + "").length != 3) {
             if ((longD + "") != 2) {
                 longD = "00" + longD;
@@ -439,16 +514,18 @@ function getIgcData() {
         }
 
         var longitudeDmm = "" + longD + longM + longDm + longDirection;
-        var latitude = element.Latitude;
-        var latD = Math.trunc(latitude);
-        var latM = Math.trunc(((latitude - latD) * 60));
-        var latDm = Math.trunc((latitude - latD - (latM / 60)) * 60000);
         var latDirection;
+        var latitude = element.Latitude;
         if (latitude > 0) {
             latDirection = "N";
         } else {
             latDirection = "S";
         }
+        latitude = Math.abs(latitude);
+        var latD = Math.trunc(latitude);
+        var latM = Math.trunc(((latitude - latD) * 60));
+        var latDm = Math.trunc((latitude - latD - (latM / 60)) * 60000);
+
 
         if ((latD + "").length != 2) {
             latD = "0" + latD;
@@ -470,5 +547,6 @@ function getIgcData() {
 
     return igcString;
 }
+
 
 

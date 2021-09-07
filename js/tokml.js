@@ -1,3 +1,4 @@
+//Quelle: https://github.com/mapbox/tokml - Tom MacWright et Al - Letzer Zugriff: 21.07.2021
 (function (f) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = f()

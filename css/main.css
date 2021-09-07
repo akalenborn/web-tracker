@@ -2,14 +2,24 @@ body {
     padding: 0;
     margin: 0;
 }
-html, body, #map {
+
+#map {
     height: 100%;
 }
 .navitems{
     color:white;
 }
 
-.navbar{padding:10px;}
+.navbar {
+    padding: 10px;
+    position: fixed !important;
+    z-index: 100100;
+    width: 100%;
+}
+
+.leaflet-top.leaflet-left, .compass {
+    margin-top: 60px;
+}
 
 .isonline{
     height:4px;
@@ -17,7 +27,8 @@ html, body, #map {
 }
 
 .compass {
-    margin:10px !important;
+    margin-top: 70px;
+    margin-right: 10px;
     float:right;
     width: 70px;
     height: 70px;

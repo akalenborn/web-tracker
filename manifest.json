@@ -1,11 +1,11 @@
 {
-  "name": "Webbased Geotracking",
+  "name": "Webbasiertes Geotracking",
   "short_name": "WG",
-  "theme_color": "#2196f3",
-  "background_color": "#2196f3",
+  "description": "Eine Webanwendung zur Off- & Onlinefähigen Ermittlung, Visualisierung und Ausgabe von Positionsdaten",
+  "theme_color": "#2c3237",
+  "background_color": "#212529",
   "display": "standalone",
   "scope": "/",
-  "permissions" : ["power"],
   "start_url": "/index.html",
   "icons": [
     {

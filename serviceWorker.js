@@ -4,7 +4,7 @@ const VERSION = "1.0";
 const CACHE_VERSION = "sw1" + VERSION;
 
 let cacheablePages = [
-    "index.html",
+    "/index.html",
     "/js/main.js",
     "/css/main.css",
     "/lib/bootstrap.min.css",
@@ -14,7 +14,7 @@ let cacheablePages = [
     "/img/marker-icon.png",
     "/img/marker-icon-2x.png",
     "/img/marker-shadow.png"
-];
+]; 
 
 // Pre-Cache all cacheable pags
 // on install we download the routes we want to cache for offline

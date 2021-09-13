@@ -1,7 +1,6 @@
 {
   "name": "Webbasiertes Geotracking",
   "short_name": "WG",
-  "description": "Eine Webanwendung zur Off- & Onlinefähigen Ermittlung, Visualisierung und Ausgabe von Positionsdaten",
   "theme_color": "#2c3237",
   "background_color": "#212529",
   "display": "standalone",

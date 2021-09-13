@@ -1,4 +1,4 @@
-/*Quelle: https://gist.github.com/JMPerez/8ca8d5ffcc0cc45a8b4e1c279efd8a94 - JMPEREZ */
+/*Quelle: https://gist.github.com/JMPerez/8ca8d5ffcc0cc45a8b4e1c279efd8a94 - J.M.PEREZ */
 
 const VERSION = "1.0";
 const CACHE_VERSION = "sw1" + VERSION;

@@ -26,6 +26,7 @@ body {
     background-color:white;
 }
 
+/* Kompass Visualisierung - Quelle: https://codepen.io/Chub/pen/eiHna - Taylor Liesnham - Letzer Zugriff: 14.08.2021 */
 .compass {
     margin-top: 70px;
     margin-right: 10px;

@@ -37,8 +37,8 @@ setMarkers();
 
 
 //Fehlermeldung ignorieren
-map.on("error", (e) => {
-    if (e && e.error !== "Error: Not Found") console.error(e);
+map.on("e", (e) => {
+    if (e && e.error !== "Karteninhalte nicht gefunden") console.error(e);
 });
 
 //OpenStreetMap-Kartendienst wird geladen
@@ -215,6 +215,8 @@ function setParameters(position) {
  *
  * @param {object} error Instanz der Fehlermeldung die bei der Positionsermittlung mittels watchPosition erzeugt wird
  */
+
+/* Quelle: https://love2dev.com/blog/html-geolocation/ - Chris Love - Letzer Zugriff: 11.08.2021*/
 function showErrors(error) {
     switch (error.code) {
         case error.PERMISSION_DENIED:
